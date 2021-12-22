@@ -1,2 +1,5 @@
-issueKeys = sh(returnStdout: true,script: 'detect-jira-issue-keys.py').trim().split('\n') as List
-println issueKeys
+def birds = [""] as String[]
+        
+        println birds.length // 3
+         
+        println birds.size() // 3

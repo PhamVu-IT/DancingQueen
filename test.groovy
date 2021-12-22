@@ -29,23 +29,19 @@ pipeline {
                     expression { pissueKeys != '' }
                 }
                 echo 'Testing condition'
-
-            }
-            post {
-                always {
-                    dir('.') {
-                        script {
-                            environmentType = "${ENV}"
-                            if (environmentType == "preprod") {
-                                environmentType = "unmapped"
-                            }
-        
-                            issueKeys = sh(
-                                returnStdout: true,
-                                script: './detect-jira-issue-keys.py'
-                            ).trim().split('\n') as List
-                        }
-                    }
+                            dir('.') {
+                                    script {
+                                        environmentType = "${ENV}"
+                                        if (environmentType == "preprod") {
+                                            environmentType = "unmapped"
+                                        }
+                    
+                                        issueKeys = sh(
+                                            returnStdout: true,
+                                            script: './detect-jira-issue-keys.py'
+                                        ).trim().split('\n') as List
+                                    }
+                                }
                    
                  
                             jiraSendDeploymentInfo site: 'chauphan.atlassian.net',
@@ -53,6 +49,11 @@ pipeline {
                                 environmentName: "${ENV}",
                                 environmentType: "${environmentType}",
                                 issueKeys: issueKeys
+
+            }
+            post {
+                always {
+                    
                 }
                 
 

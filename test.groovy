@@ -26,7 +26,7 @@ pipeline {
             steps {
                 when {
                 // Only say hello if a "greeting" is requested
-                    expression { pissueKeys != '' }
+                    expression { issueKeys != '' }
                 }
                 echo 'Testing condition'
                             dir('.') {

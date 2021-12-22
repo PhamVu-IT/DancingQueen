@@ -17,14 +17,18 @@ pipeline {
                 echo 'Testing..'
             }
         }
+        
         stage('Deploy') {
             
             steps {
                 echo 'Deploying....'
             }
+            
+        }
+        stage('Getting key') {
             steps {
-                echo "Getting issueKeys"
-                dir('.') {
+                    echo 'Getting key ....' 
+                    dir('.') {
                                     script {
                                         environmentType = "${ENV}"
                                         if (environmentType == "preprod") {
@@ -35,33 +39,24 @@ pipeline {
                                             returnStdout: true,
                                             script: './detect-jira-issue-keys.py'
                                         ).trim().split('\n') as List
+                                        if (issueKeys.size()=0) { jira = false ; echo 'jira = false'}
                                     }
                                 }
+                }
+        }
+        stage('To Jira') {
+            when {
+                expression { jira }
             }
             steps {
-                when {
-                // Only say sending to Jira if a "issueKey" is not null
-                    expression { issueKeys != '' }
-                }
-                echo 'Testing condition. Sending to JIRA cloud'
-                                            
-                            jiraSendDeploymentInfo site: 'chauphan.atlassian.net',
-                                environmentId: "${ENV}",
-                                environmentName: "${ENV}",
-                                environmentType: "${environmentType}",
+                echo 'Deploying....'
+                jiraSendDeploymentInfo site: 'chauphan.atlassian.net',
+                environmentId: "${ENV}",
+                               environmentName: "${ENV}",
+                               environmentType: "${environmentType}",
                                 issueKeys: issueKeys
-
             }
-            post {
-                always {
-                    
-                }
-                
-
-                cleanup {
-                    cleanWs()
-                }
-            }
+            
         }
     }
 }

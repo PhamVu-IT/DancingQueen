@@ -39,7 +39,7 @@ pipeline {
                                             returnStdout: true,
                                             script: './detect-jira-issue-keys.py'
                                         ).trim().split('\n') as List
-                                        if (issueKeys.size()=0) { jira = false ; echo 'jira = false'}
+                                        if (issueKeys.size()==0) { jira = false ; echo 'jira = false'} else { jira = true }
                                     }
                                 }
                 }

@@ -22,14 +22,9 @@ pipeline {
             steps {
                 echo 'Deploying....'
             }
-
             steps {
-                when {
-                // Only say hello if a "greeting" is requested
-                    expression { issueKeys != '' }
-                }
-                echo 'Testing condition'
-                            dir('.') {
+                echo "Getting issueKeys"
+                dir('.') {
                                     script {
                                         environmentType = "${ENV}"
                                         if (environmentType == "preprod") {
@@ -42,8 +37,14 @@ pipeline {
                                         ).trim().split('\n') as List
                                     }
                                 }
-                   
-                 
+            }
+            steps {
+                when {
+                // Only say sending to Jira if a "issueKey" is not null
+                    expression { issueKeys != '' }
+                }
+                echo 'Testing condition. Sending to JIRA cloud'
+                                            
                             jiraSendDeploymentInfo site: 'chauphan.atlassian.net',
                                 environmentId: "${ENV}",
                                 environmentName: "${ENV}",
